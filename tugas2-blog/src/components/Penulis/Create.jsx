@@ -3,6 +3,7 @@ import axios from "axios";
 
 export default function CreateBlog() {
   const [namaPenulis, setNamaPenulis] = useState("");
+  const [emailPenulis, setEmailPenulis] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -18,7 +19,8 @@ export default function CreateBlog() {
 
     try {
       const response = await axios.post("https://tugas1-pw-2.vercel.app/api/api/penulis", {
-        nama: namaBlog,
+        nama: namaPenulis,
+        email: emailPenulis,
       });
 
       if (response.status === 201) {
@@ -49,7 +51,14 @@ export default function CreateBlog() {
 
           <input type="text" className="form-control" id="namaPenulis" value={namaPenulis} onChange={(e) => setNamaPenulis(e.target.value)} placeholder="Enter Penulis Name" />
         </div>
+        <div className="mb-3">
+          <label htmlFor="emailPenulis" className="form-label">
+            {" "}
+            Email
+          </label>
 
+          <input type="text" className="form-control" id="emailPenulis" value={emailPenulis} onChange={(e) => setEmailPenulis(e.target.value)} placeholder="Enter Email" />
+        </div>
         <button type="submit" className="btn btn-primary">
           Add
         </button>

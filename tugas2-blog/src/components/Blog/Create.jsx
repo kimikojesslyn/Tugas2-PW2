@@ -28,33 +28,44 @@ export default function CreateBlog() {
     setError("");
     setSuccess("");
 
+  
     if (namaBlog.trim() === "") {
       setError("Judul Blog is required");
       return;
     }
+    if (isiBlog.trim() === "") {
+      setError("Isi Blog is required");
+      return;
+    }
+    if (!tanggalPenulisan) {
+      setError("Tanggal Penulisan is required");
+      return;
+    }
+    if (!penulisID) {
+      setError("Penulis must be selected");
+      return;
+    }
 
     try {
-      const response = await axios
-        .post("https://tugas1-pw-2.vercel.app/api/api/blog", {
-          judul: namaBlog,
-          isi: isiBlog,
-          tanggal_penulisan: new Intl.DateTimeFormat("en-CA").format(new Date(tanggalPenulisan)),
-          penulis_id: penulisID,
-        })
-        .catch((error) => {
-          console.log(error);
-          setError(error.response.data.message);
-        });
-      console.log("Response:", response.data);
+      const formattedDate = tanggalPenulisan ? new Intl.DateTimeFormat("en-CA").format(new Date(tanggalPenulisan)) : "";
+
+      const response = await axios.post("https://tugas1-pw-2.vercel.app/api/api/blog", {
+        judul: namaBlog.trim(),
+        isi: isiBlog.trim(),
+        tanggal_penulisan: formattedDate,
+        penulis_id: penulisID,
+      });
+
       if (response.status === 201) {
         setSuccess("Blog created successfully!");
-      } else {
-        console.log("error");
-        setError("Failed to create Blog");
+        setNamaBlog("");
+        setIsi("");
+        setTanggal_Penulisan("");
+        setPenulisID("");
       }
     } catch (error) {
-      console.log("Error details:", error.response?.data);
-      setError(JSON.stringify(error.response?.data));
+      console.error("Error creating blog:", error);
+      setError(error.response?.data?.message || "Failed to create Blog. Please try again.");
     }
   };
 

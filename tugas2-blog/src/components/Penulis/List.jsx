@@ -20,7 +20,7 @@ export default function List() {
         axios
           .delete(`https://tugas1-pw-2.vercel.app/api/api/penulis/${id}`)
           .then((response) => {
-            setPenulis(blog.filter((data) => data.id !== id));
+            setPenulis(penulis.filter((data) => data.id !== id));
             Swal.fire({
               title: "Deleted!",
               text: "Your data has been deleted.",

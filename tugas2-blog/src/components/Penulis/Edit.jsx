@@ -6,14 +6,17 @@ import Swal from "sweetalert2";
 export default function Edit() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [nama, setNama] = useState("");
+  const [namaPenulis, setNamaPenulis] = useState("");
+  const [emailPenulis, setEmailPenulis] = useState("");
   const [error, setError] = useState(null);
 
   useEffect(() => {
     axios
       .get(`https://tugas1-pw-2.vercel.app/api/api/penulis/${id}`)
       .then((response) => {
-        setNama(response.data.result.nama);
+        const data = response.data;
+        setNamaPenulis(data.nama);
+        setEmailPenulis(data.email);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
@@ -22,13 +25,23 @@ export default function Edit() {
   }, [id]);
 
   const handleChange = (e) => {
-    setNama(e.target.value);
+    const { id, value } = e.target;
+    switch (id) {
+      case "namaPenulis":
+        setNamaPenulis(value);
+        break;
+      case "emailPenulis":
+        setEmailPenulis(value);
+        break;
+      default:
+        break;
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .patch(`https://tugas1-pw-2.vercel.app/api/api/penulis/${id}`, { nama })
+      .patch(`https://tugas1-pw-2.vercel.app/api/api/penulis/${id}`, { nama : namaPenulis, email: emailPenulis })
       .then((response) => {
         Swal.fire({
           title: "Success!",
