@@ -1,12 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function CreateBlog() {
   const [namaBlog, setNamaBlog] = useState("");
-  const [isi, setIsi] = useState("");
-  const [tanggal_penulisan, setTanggal_Penulisan] = useState("");
+  const [isiBlog, setIsi] = useState("");
+  const [tanggalPenulisan, setTanggal_Penulisan] = useState("");
+  const [penulisID, setPenulisID] = useState("");
+  const [PenulisList, setPenulisList] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    const fetchPenulis = async () => {
+      try {
+        const response = await axios.get("https://tugas1-pw-2.vercel.app/api/api/penulis");
+        setPenulisList(response.data);
+      } catch (error) {
+        console.error("Error fetch data penulis:", error);
+      }
+    };
+
+    fetchPenulis();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,18 +34,27 @@ export default function CreateBlog() {
     }
 
     try {
-      const response = await axios.post("https://tugas1-pw-2.vercel.app/api/api/blog", {
-        nama: namaBlog,
-      });
-
+      const response = await axios
+        .post("https://tugas1-pw-2.vercel.app/api/api/blog", {
+          judul: namaBlog,
+          isi: isiBlog,
+          tanggal_penulisan: new Intl.DateTimeFormat("en-CA").format(new Date(tanggalPenulisan)),
+          penulis_id: penulisID,
+        })
+        .catch((error) => {
+          console.log(error);
+          setError(error.response.data.message);
+        });
+      console.log("Response:", response.data);
       if (response.status === 201) {
         setSuccess("Blog created successfully!");
-        setNamaBlog("");
       } else {
+        console.log("error");
         setError("Failed to create Blog");
       }
     } catch (error) {
-      setError("An error occurred while creating blog");
+      console.log("Error details:", error.response?.data);
+      setError(JSON.stringify(error.response?.data));
     }
   };
 
@@ -53,15 +77,27 @@ export default function CreateBlog() {
           <label htmlFor="isi" className="form-label">
             Isi
           </label>
-          <input type="text" className="form-control" id="isi" value={isi} onChange={(e) => setIsi(e.target.value)} placeholder="Enter Isi" />
+          <input type="text" className="form-control" id="isi" value={isiBlog} onChange={(e) => setIsi(e.target.value)} placeholder="Enter Isi" />
         </div>
         <div className="mb-3">
-          <label htmlFor="isi" className="form-label">
+          <label htmlFor="tanggal_penulisan" className="form-label">
             Tanggal Penulisan
           </label>
-          <input type="text" className="form-control" id="tanggal_penulisan" value={tanggal_penulisan} onChange={(e) => setIsi(e.target.value)} pattern="\d{4}-\d{2}-\d{2}" placeholder="YYYY-MM-DD" />
+          <input type="date" className="form-control" id="tanggal_penulisan" value={tanggalPenulisan} onChange={(e) => setTanggal_Penulisan(e.target.value)} />
         </div>
-
+        <div className="mb-4">
+          <label htmlFor="penulisID" className="form-label">
+            <strong>Nama Penulis</strong>
+          </label>
+          <select className="form-select" id="penulisID" value={penulisID} onChange={(e) => setPenulisID(e.target.value)}>
+            <option value="">Pilih Penulis</option>
+            {PenulisList.map((penulis) => (
+              <option key={penulis.id} value={penulis.id}>
+                {penulis.nama}
+              </option>
+            ))}
+          </select>
+        </div>
         <button type="submit" className="btn btn-primary">
           Create
         </button>
