@@ -41,7 +41,7 @@ export default function Edit() {
   const handleSubmit = (e) => {
     e.preventDefault();
     axios
-      .patch(`https://tugas1-pw-2.vercel.app/api/api/penulis/${id}`, { nama : namaPenulis, email: emailPenulis })
+      .patch(`https://tugas1-pw-2.vercel.app/api/api/penulis/${id}`, { nama: namaPenulis, email: emailPenulis })
       .then((response) => {
         Swal.fire({
           title: "Success!",
@@ -62,10 +62,17 @@ export default function Edit() {
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="nama" className="form-label">
-            Nama Penulis
+            <strong>Nama Penulis</strong>
           </label>
 
-          <input type="text" className="form-control" id="nama" value={nama} onChange={handleChange} required />
+          <input type="text" className="form-control" id="nama" value={nama} onChange={handleChange} required placeholder=" Enter Nama Penulis" />
+        </div>
+
+        <div className="mb-3">
+          <label htmlFor="emailPenulis" className="form-label">
+            <strong>Email</strong>
+          </label>
+          <input type="text" id="emailPenulis" className="form-control" value={emailPenulis} onChange={handleChange} placeholder=" Enter Email" />
         </div>
         <button type="submit" className=" btn btn-primary">
           Save
